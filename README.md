@@ -18,11 +18,11 @@ Model może przewidzieć obecność emocji dla dowolnego tekstu oraz ocenić sku
 
 ##  Funkcjonalności
 
-- Ładowanie danych treningowych, walidacyjnych i testowych z plików `.txt`.  
+-  Ładowanie danych treningowych, walidacyjnych i testowych z plików `.txt`.
+-  Obsługa wag dla rzadziej występujących emocji w danych treningowych.  
 - Trenowanie modelu klasyfikacji emocji przy użyciu **LightGBM** i reprezentacji n-gramów.  
 - Prognozowanie emocji dla dowolnego tekstu.  
 - Ewaluacja modelu: dokładność mikro/makro, log-loss, macierz pomyłek, skuteczność dla każdej klasy i ważona dokładność.  
-- Obsługa wag dla rzadziej występujących emocji w danych treningowych.  
 
 ---
 
@@ -51,7 +51,6 @@ git clone https://github.com/rogutmichal/emocje.git
 
 - Raporty zawierają dokładność mikro/makro, log-loss i macierz pomyłek.  
 - Wyświetlana jest skuteczność dla każdej emocji.  
-- Wyliczana jest również **ważona dokładność**, uwzględniająca liczbę próbek dla każdej emocji.
 
 ---
 
