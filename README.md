@@ -3,7 +3,7 @@
 ##  Opis projektu
 
 `EmotionModel` to projekt w języku C# wykorzystujący **ML.NET** do analizy tekstów i przewidywania emocji wyrażanych w recenzjach lub opiniach.  
-Projekt trenuje model klasyfikacji wieloklasowej, który rozpoznaje sześć emocji:  
+W projekcie następuje trening model klasyfikacji wieloklasowej, który rozpoznaje sześć emocji:  
 
 - sadness  
 - anger  
