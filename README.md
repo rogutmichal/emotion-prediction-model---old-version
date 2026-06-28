@@ -1,85 +1,130 @@
-# EmotionModel – Model uczenia maszynowego do wykrywania emocji w tekstach przy użyciu LightGBM
+# EmotionModelPrediction – Machine Learning Model for Emotion Detection Using LightGBM
 
-##  Opis projektu
+## Project Overview
 
-`EmotionModel` to projekt w języku C# wykorzystujący **ML.NET** do analizy tekstów i przewidywania emocji wyrażanych w recenzjach lub opiniach.  
-W projekcie następuje trening model klasyfikacji wieloklasowej, który rozpoznaje sześć emocji:  
+**EmotionModel** is a C# project built with **ML.NET** that analyzes text and predicts emotions expressed in reviews or user-generated content.
 
-- sadness  
-- anger  
-- love  
-- surprise  
-- fear  
-- joy  
-Do treningu modelu wykorzystano zbiór danych: https://www.kaggle.com/datasets/praveengovi/emotions-dataset-for-nlp
-Model może przewidzieć obecność emocji dla dowolnego tekstu oraz ocenić skuteczność klasyfikacji na danych walidacyjnych i testowych.
+The project trains a **multiclass classification** model capable of recognizing six emotions:
 
----
+- sadness
+- anger
+- love
+- surprise
+- fear
+- joy
 
-##  Funkcjonalności
+The model was trained using the following Kaggle dataset:
+https://www.kaggle.com/datasets/praveengovi/emotions-dataset-for-nlp
 
--  Ładowanie danych treningowych, walidacyjnych i testowych z plików `.txt`.
--  Obsługa wag dla rzadziej występujących emocji w danych treningowych.  
-- Trenowanie modelu klasyfikacji emocji przy użyciu **LightGBM** i reprezentacji n-gramów.  
-- Prognozowanie emocji dla dowolnego tekstu.  
-- Ewaluacja modelu: dokładność mikro/makro, log-loss, macierz pomyłek, skuteczność dla każdej klasy i ważona dokładność.  
+It can predict the dominant emotion in any input text and evaluate its performance on validation and test datasets.
 
 ---
 
-##  Jak uruchomić projekt
+## Features
 
-1. **Sklonuj repozytorium:**
+- Load training, validation, and test datasets from `.txt` files.
+- Handle class imbalance by applying weights to underrepresented emotions.
+- Train an emotion classification model using **LightGBM** and **n-gram text features**.
+- Predict emotions for any input text.
+- Evaluate model performance using:
+  - Micro and Macro Accuracy
+  - Log Loss
+  - Confusion Matrix
+  - Per-class Accuracy
+  - Weighted Accuracy
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/rogutmichal/emocje.git
 ```
 
-2. **Otwórz projekt w Visual Studio** wybierając plik `emocje.sln`.
+### 2. Open the solution
 
-3. **Zainstaluj wymagane pakiety NuGet**:  
-   - Microsoft.ML  
-   - Microsoft.ML.LightGbm  
+Open `emocje.sln` in **Visual Studio**.
 
-4. **Uruchom projekt**  
-   - Jeśli model nie istnieje, zostanie wytrenowany automatycznie na danych z `train.txt`.  
-   - Po wytrenowaniu model jest zapisany w `emotion_model.zip` i może być ponownie użyty.
+### 3. Install the required NuGet packages
 
-5. **Prognozowanie emocji dla przykładowego tekstu** odbywa się w `Program.cs` 
+- Microsoft.ML
+- Microsoft.ML.LightGbm
+
+### 4. Run the project
+
+- If no trained model exists, it will automatically be trained using `train.txt`.
+- After training, the model is saved as `emotion_model.zip` and can be reused in future runs.
+
+### 5. Predict emotions
+
+Example predictions can be found in `Program.cs`.
+
+---
+
+## Model Evaluation
+
+The evaluation reports include:
+
+- Micro Accuracy
+- Macro Accuracy
+- Log Loss
+- Confusion Matrix
+- Accuracy for each emotion class
 
 ---
 
-##  Ewaluacja modelu
+## How the Model Works
 
-- Raporty zawierają dokładność mikro/makro, log-loss i macierz pomyłek.  
-- Wyświetlana jest skuteczność dla każdej emocji.  
+1. **Text preprocessing**
+   - Text normalization
+   - Tokenization
+   - Stop-word removal
+   - Generation of 1–3 word n-grams
+
+2. **Feature extraction**
+   - Conversion of text into numerical feature vectors
+
+3. **Model training**
+   - LightGBM multiclass classifier
+   - Class weighting to improve performance on underrepresented emotions
+
+4. **Prediction**
+   - The model outputs probabilities for all six emotion classes.
 
 ---
 
-##  Jak działa model
+## Model Performance
 
-1. **Przetwarzanie tekstu:** normalizacja, tokenizacja, usuwanie stop-words, tworzenie n-gramów (1-3).  
-2. **Konwersja tokenów na wartości numeryczne**  
-3. **Trenowanie LightGBM** na danych z uwzględnieniem wag dla niedoreprezentowanych emocji.  
-4. **Predykcja:** model zwraca prawdopodobieństwa dla wszystkich 6 emocji 
+The model achieved **90.40% accuracy** on an independent test dataset (`test.txt`).
+
+The best-performing emotion classes were:
+
+- **love** – 96.23%
+- **surprise** – 93.94%
+- **anger** – 93.82%
 
 ---
-Model osiągnął 90.40% dokładności na niezależnym zbiorze testowym (test.txt). Najlepiej rozpoznawane emocje to love (96.23%), surprise (93.94%) oraz anger (93.82%).
 
-##  Wyniki modelu na zbiorze testowym (`test.txt`)
+# Test Results (`test.txt`)
 
-Model został oceniony wyłącznie na zbiorze testowym zawierającym **2000 próbek**.
+The model was evaluated on an independent test dataset containing **2,000 samples**.
 
-### Główne metryki
+## Overall Metrics
 
-| Metryka | Wynik |
-|----------|--------|
-| Accuracy (Micro) | **90.40%** |
-| Accuracy (Macro) | **91.79%** |
+| Metric | Result |
+|---------|--------|
+| Micro Accuracy | **90.40%** |
+| Macro Accuracy | **91.79%** |
 | Log Loss | **0.2610** |
-| Poprawne predykcje | **1808 / 2000** |
+| Correct Predictions | **1808 / 2000** |
 
-### Skuteczność dla poszczególnych emocji
+---
 
-| Emocja | Accuracy |
+## Per-Class Accuracy
+
+| Emotion | Accuracy |
 |---------|----------|
 | anger | 93.82% (258/275) |
 | fear | 88.39% (198/224) |
@@ -88,9 +133,11 @@ Model został oceniony wyłącznie na zbiorze testowym zawierającym **2000 pró
 | sadness | 89.85% (522/581) |
 | surprise | 93.94% (62/66) |
 
-### Precision, Recall i F1-Score
+---
 
-| Emocja | Precision | Recall | F1-Score |
+## Precision, Recall & F1-Score
+
+| Emotion | Precision | Recall | F1-Score |
 |---------|-----------|--------|----------|
 | sadness | 98.12% | 89.85% | 93.80% |
 | anger | 88.97% | 93.82% | 91.33% |
@@ -100,7 +147,7 @@ Model został oceniony wyłącznie na zbiorze testowym zawierającym **2000 pró
 | joy | 96.24% | 88.49% | 92.20% |
 
 <details>
-<summary><b>Confusion Matrix (TEST)</b></summary>
+<summary><b>Confusion Matrix (Test Set)</b></summary>
 
 ```text
 Predicted →    sadness     anger      love  surprise      fear       joy
@@ -113,4 +160,3 @@ joy                  3         6        57        11         3       615
 ```
 
 </details>
-
