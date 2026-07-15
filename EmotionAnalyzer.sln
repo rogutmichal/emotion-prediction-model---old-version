@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionAnalyzerConsole", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionAnalyzerML", "EmotionAnalyzerML\EmotionAnalyzerML.csproj", "{3AD30562-81EE-46F4-83EA-9CBCF2C0B983}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionAnalyzerTests", "EmotionAlazyzerTests\EmotionAnalyzerTests.csproj", "{5C12B801-E743-403B-8CC8-D39DA52F93E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3AD30562-81EE-46F4-83EA-9CBCF2C0B983}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AD30562-81EE-46F4-83EA-9CBCF2C0B983}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AD30562-81EE-46F4-83EA-9CBCF2C0B983}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C12B801-E743-403B-8CC8-D39DA52F93E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C12B801-E743-403B-8CC8-D39DA52F93E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C12B801-E743-403B-8CC8-D39DA52F93E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C12B801-E743-403B-8CC8-D39DA52F93E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
