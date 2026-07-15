@@ -1,13 +1,24 @@
 ﻿using EmotionAnalyzerML.Models;
-using EmotionAnalyzerML;
 using Microsoft.ML;
+using Microsoft.ML.Data;
 
-namespace emocje.Services
+namespace EmotionAnalyzerML.Services
 {
     public class EmotionPredictionService
     {
         private readonly MLContext _context;
         private readonly ITransformer _model;
+
+
+        private static readonly string[] EmotionLabels =
+        {
+            "sadness",
+            "anger",
+            "love",
+            "surprise",
+            "fear",
+            "joy"
+        };
 
 
         public EmotionPredictionService(
@@ -21,16 +32,51 @@ namespace emocje.Services
 
         public Dictionary<string, float> Predict(string text)
         {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                throw new ArgumentException(
+                    "Text cannot be empty");
+            }
+
+
             var input = new TextData
             {
                 Text = text
             };
 
 
-            return EmotionModel.PredictEmotion(
-                _context,
-                _model,
-                input);
+            var data = new List<TextData>
+            {
+                input
+            };
+
+
+            var dataView = _context
+                .Data
+                .LoadFromEnumerable(data);
+
+
+            var transformedData =
+                _model.Transform(dataView);
+
+
+            var scores =
+                transformedData
+                .GetColumn<float[]>("Score")
+                .First();
+
+
+            return EmotionLabels
+                .Select((label, index) => new
+                {
+                    label,
+                    score = scores[index]
+                })
+                .OrderByDescending(x => x.score)
+                .Take(3)
+                .ToDictionary(
+                    x => x.label,
+                    x => x.score);
         }
     }
 }

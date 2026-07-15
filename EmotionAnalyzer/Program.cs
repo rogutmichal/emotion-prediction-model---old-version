@@ -1,5 +1,4 @@
-﻿using emocje.Services;
-using EmotionAnalyzerML;
+﻿using EmotionAnalyzerML;
 using EmotionAnalyzerML.Models;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using EmotionAnalyzerML.Services;
 
 
 
@@ -30,13 +30,23 @@ public class EmotionBasedRecommendation
         if (!File.Exists(ModelPath))
         {
             Console.WriteLine("Trenowanie modelu");
-            model = EmotionModelTrainer.TrainModel(context, trainTexts);
-            context.Model.Save(model, context.Data.LoadFromEnumerable(trainTexts).Schema, ModelPath);
+
+            model = EmotionModelTrainer.TrainModel(
+                context,
+                trainTexts);
+
+            context.Model.Save(
+                model,
+                context.Data.LoadFromEnumerable(trainTexts).Schema,
+                ModelPath);
         }
         else
         {
             Console.WriteLine("Ładowanie modelu");
-            model = context.Model.Load(ModelPath, out _);
+
+            model = ModelLoader.Load(
+                context,
+                ModelPath);
         }
         Console.WriteLine("Enter text for analysis:");
         string userReview = Console.ReadLine();
