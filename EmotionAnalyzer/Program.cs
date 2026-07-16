@@ -196,12 +196,10 @@ public class EmotionBasedRecommendation
 
 
 
-
         var emotionService =
-            new EmotionPredictionService(
-                context,
-                loadedModel.Model);
-
+    new EmotionPredictionService(
+        context,
+        loadedModel);
 
 
 
@@ -249,12 +247,6 @@ public class EmotionBasedRecommendation
         }
 
     }
-
-
-
-
-
-
 
 
     private static void EvaluateModel(

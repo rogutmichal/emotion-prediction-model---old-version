@@ -7,8 +7,7 @@ namespace EmotionAnalyzerML.Services
     public class EmotionPredictionService
     {
         private readonly MLContext _context;
-        private readonly ITransformer _model;
-
+        private readonly LoadedModelService _loadedModel;
 
         private static readonly string[] EmotionLabels =
         {
@@ -22,17 +21,15 @@ namespace EmotionAnalyzerML.Services
 
 
         public EmotionPredictionService(
-            MLContext context,
-            ITransformer model)
+          MLContext context,
+          LoadedModelService loadedModel)
         {
             _context = context;
-            _model = model;
+            _loadedModel = loadedModel;
         }
 
 
-
-        public EmotionPredictionResult Predict(
-            string text)
+        public EmotionPredictionResult Predict(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
             {
@@ -41,12 +38,17 @@ namespace EmotionAnalyzerML.Services
             }
 
 
+            if (!_loadedModel.IsLoaded)
+            {
+                throw new InvalidOperationException(
+                    "Model is not loaded.");
+            }
+
 
             var input = new TextData
             {
                 Text = text
             };
-
 
 
             var dataView =
@@ -57,9 +59,8 @@ namespace EmotionAnalyzerML.Services
                     });
 
 
-
             var transformedData =
-                _model.Transform(dataView);
+                _loadedModel.Model.Transform(dataView);
 
 
 
