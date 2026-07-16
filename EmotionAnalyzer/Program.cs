@@ -10,6 +10,7 @@ public class EmotionBasedRecommendation
 {
     public static void Main(string[] args)
     {
+
         var configuration =
             new ConfigurationBuilder()
                 .AddJsonFile(
@@ -27,7 +28,55 @@ public class EmotionBasedRecommendation
 
 
 
-        var context = new MLContext();
+        var context =
+            new MLContext();
+
+
+
+
+        // Model loading service
+
+        var modelLoader =
+            new ModelLoader(
+                context);
+
+
+
+        // Model stored in memory
+
+        var loadedModel =
+            new LoadedModelService();
+
+
+
+
+        // Load model once
+
+        if (File.Exists(modelSettings.ModelPath))
+        {
+            loadedModel.LoadModel(
+                modelLoader,
+                modelSettings.ModelPath);
+        }
+
+
+
+
+        // Training services
+
+        var modelTrainer =
+            new EmotionModelTrainer(
+                context);
+
+
+
+        var trainingService =
+            new TrainingService(
+                context,
+                modelTrainer);
+
+
+
 
 
 
@@ -49,42 +98,63 @@ public class EmotionBasedRecommendation
 
             Console.Write("Select options: ");
 
-            var choice = Console.ReadLine();
+
+            var choice =
+                Console.ReadLine();
+
 
 
 
             switch (choice)
             {
                 case "1":
+
                     PredictEmotion(
                         context,
-                        modelSettings); 
+                        loadedModel);
+
                     break;
+
 
 
                 case "2":
+
                     EvaluateModel(
                         context,
+                        loadedModel,
                         modelSettings);
+
                     break;
+
 
 
                 case "3":
+
                     TrainModel(
-                        context,
-                        modelSettings); 
+                        modelSettings,
+                        trainingService,
+                        loadedModel,
+                        modelLoader);
+
                     break;
+
 
 
                 case "0":
+
                     return;
 
 
+
                 default:
+
                     Console.WriteLine(
                         "Invalid option.");
+
                     break;
             }
+
+
 
 
             Console.WriteLine();
@@ -93,6 +163,7 @@ public class EmotionBasedRecommendation
                 "Press any key to continue...");
 
             Console.ReadKey();
+
         }
     }
 
@@ -100,50 +171,58 @@ public class EmotionBasedRecommendation
 
 
 
+
+
     private static void PredictEmotion(
         MLContext context,
-        ModelSettings modelSettings)
+        LoadedModelService loadedModel)
     {
         Console.WriteLine();
-        Console.WriteLine("=== Text analysis ===");
+
+        Console.WriteLine(
+            "=== Text analysis ===");
 
 
 
-        if (!File.Exists(
-            modelSettings.ModelPath)) 
+
+        if (!loadedModel.IsLoaded)
         {
             Console.WriteLine(
-                "Model not found.");
-
-            Console.WriteLine(
-                "Do the training first.");
+                "Model not loaded. Train model first.");
 
             return;
         }
 
 
 
-        var model =
-            ModelLoader.Load(
-                context,
-                modelSettings.ModelPath); 
 
 
         var emotionService =
             new EmotionPredictionService(
                 context,
-                model);
+                loadedModel.Model);
 
 
 
-        Console.Write("Enter text: ");
 
-        var text = Console.ReadLine();
+
+        Console.Write(
+            "Enter text: ");
+
+
+
+        var text =
+            Console.ReadLine();
+
+
 
 
 
         var result =
-            emotionService.Predict(text);
+            emotionService.Predict(
+                text);
+
+
 
 
 
@@ -152,9 +231,14 @@ public class EmotionBasedRecommendation
         Console.WriteLine(
             $"Text: {result.Text}");
 
+
+
         Console.WriteLine();
 
-        Console.WriteLine("Result:");
+        Console.WriteLine(
+            "Result:");
+
+
 
 
 
@@ -163,7 +247,10 @@ public class EmotionBasedRecommendation
             Console.WriteLine(
                 $"{prediction.Emotion}: {prediction.Confidence:P2}");
         }
+
     }
+
+
 
 
 
@@ -172,7 +259,8 @@ public class EmotionBasedRecommendation
 
     private static void EvaluateModel(
         MLContext context,
-        ModelSettings modelSettings) 
+        LoadedModelService loadedModel,
+        ModelSettings modelSettings)
     {
         Console.WriteLine();
 
@@ -181,21 +269,16 @@ public class EmotionBasedRecommendation
 
 
 
-        if (!File.Exists(
-            modelSettings.ModelPath)) 
+
+        if (!loadedModel.IsLoaded)
         {
             Console.WriteLine(
-                "Model not found.");
+                "Model not loaded.");
 
             return;
         }
 
 
-
-        var model =
-            ModelLoader.Load(
-                context,
-                modelSettings.ModelPath); 
 
 
 
@@ -205,17 +288,23 @@ public class EmotionBasedRecommendation
 
 
 
+
+
         var evaluator =
             new ModelEvaluationService(
                 context);
 
 
 
+
+
         var result =
             evaluator.Evaluate(
-                model,
+                loadedModel.Model,
                 testData,
                 "TEST");
+
+
 
 
 
@@ -230,87 +319,6 @@ public class EmotionBasedRecommendation
         Console.WriteLine(
             $"LogLoss: {result.LogLoss:F4}");
 
-
-
-        Console.WriteLine();
-
-        Console.WriteLine(
-            "=== Per-class metrics ===");
-
-
-
-        Console.WriteLine(
-            $"{"Label",-15}" +
-            $"{"Precision",15}" +
-            $"{"Recall",15}" +
-            $"{"F1-Score",15}");
-
-
-
-        Console.WriteLine(
-            new string('-', 60));
-
-
-
-        foreach (var label in result.Labels)
-        {
-            Console.WriteLine(
-                $"{label,-15}" +
-                $"{result.Precision[label],15:P2}" +
-                $"{result.Recall[label],15:P2}" +
-                $"{result.F1Score[label],15:P2}");
-        }
-
-
-
-        Console.WriteLine();
-
-        Console.WriteLine(
-            "=== Confusion Matrix ===");
-
-
-        int width = 12;
-
-
-        Console.Write(
-            string.Format(
-                "{0,-15}",
-                "Actual \\ Pred"));
-
-
-
-        foreach (var label in result.Labels)
-        {
-            Console.Write(
-                string.Format(
-                    "{0," + width + "}",
-                    label));
-        }
-
-
-        Console.WriteLine();
-
-
-
-        for (int i = 0; i < result.Labels.Count; i++)
-        {
-            Console.Write(
-                string.Format(
-                    "{0,-15}",
-                    result.Labels[i]));
-
-
-            for (int j = 0; j < result.Labels.Count; j++)
-            {
-                Console.Write(
-                    string.Format(
-                        "{0," + width + "}",
-                        result.ConfusionMatrix[i][j]));
-            }
-
-
-            Console.WriteLine();
-        }
     }
 
 
@@ -318,9 +326,15 @@ public class EmotionBasedRecommendation
 
 
 
+
+
+
+
     private static void TrainModel(
-        MLContext context,
-        ModelSettings modelSettings) 
+        ModelSettings modelSettings,
+        TrainingService trainingService,
+        LoadedModelService loadedModel,
+        ModelLoader modelLoader)
     {
         Console.WriteLine();
 
@@ -329,27 +343,38 @@ public class EmotionBasedRecommendation
 
 
 
+
+
         var trainData =
             DataLoader.LoadDataFromFile(
-                modelSettings.TrainFilePath); 
+                modelSettings.TrainFilePath);
 
 
 
-        var trainer =
-            new TrainingService(
-                context);
 
 
-
-        trainer.TrainAndSave(
+        trainingService.TrainAndSave(
             trainData,
-            modelSettings.ModelPath); 
+            modelSettings.ModelPath);
+
+
+
+
+
+        // Po treningu przeładuj model do pamięci
+
+        loadedModel.LoadModel(
+            modelLoader,
+            modelSettings.ModelPath);
+
+
 
 
 
         Console.WriteLine();
 
         Console.WriteLine(
-            "The model has been saved.");
+            "The model has been saved and loaded.");
+
     }
 }

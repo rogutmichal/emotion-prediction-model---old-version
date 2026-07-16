@@ -1,54 +1,207 @@
 ﻿using EmotionAnalyzerML.Models;
 using Microsoft.ML;
 using Microsoft.ML.Trainers.LightGbm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EmotionAnalyzerML
+
+namespace EmotionAnalyzerML.Services
 {
     public class EmotionModelTrainer
     {
-        public static ITransformer TrainModel(MLContext context, List<TextData> texts)
+        private readonly MLContext _context;
+
+
+        public EmotionModelTrainer(
+            MLContext context)
         {
-            var classCounts = texts.GroupBy(r => r.Emotion)
-                                   .ToDictionary(g => g.Key, g => g.Count());
-            int maxCount = classCounts.Values.Max();
+            _context = context;
+        }
 
-            var weightedTexts = texts.Select(r => new WeightedData
+
+
+        public ITransformer TrainModel(
+            List<TextData> texts)
+        {
+
+            if (texts == null || texts.Count == 0)
             {
-                Text = r.Text,
-                Emotion = r.Emotion,
-                Weight = (float)maxCount / classCounts[r.Emotion]
-            }).ToList();
+                throw new ArgumentException(
+                    "Training data cannot be empty.");
+            }
 
-            var trainData = context.Data.LoadFromEnumerable(weightedTexts);
-            var cachedTrainData = context.Data.Cache(trainData);
 
-            var pipeline = context.Transforms.Conversion.MapValueToKey("Label", "Emotion")
-                .Append(context.Transforms.Text.NormalizeText("NormalizedText", "Text"))
-                .Append(context.Transforms.Text.TokenizeIntoWords("Tokens", "NormalizedText"))
-                .Append(context.Transforms.Text.RemoveDefaultStopWords("TokensClean", "Tokens"))
-                .Append(context.Transforms.Conversion.MapValueToKey("TokensKeys", "TokensClean"))
-                .Append(context.Transforms.Text.ProduceNgrams("UniGrams", "TokensKeys", ngramLength: 1, useAllLengths: false))
-                .Append(context.Transforms.Text.ProduceNgrams("BiGrams", "TokensKeys", ngramLength: 2, useAllLengths: false))
-                .Append(context.Transforms.Text.ProduceNgrams("TriGrams", "TokensKeys", ngramLength: 3, useAllLengths: false))
-                .Append(context.Transforms.Concatenate("Features", "UniGrams", "BiGrams", "TriGrams"))
-                .Append(context.MulticlassClassification.Trainers.LightGbm(new LightGbmMulticlassTrainer.Options
+
+            // Obliczenie wag klas
+            var classCounts =
+                texts
+                .GroupBy(x => x.Emotion)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Count());
+
+
+
+            int maxCount =
+                classCounts.Values.Max();
+
+
+
+            var weightedTexts =
+                texts
+                .Select(x => new WeightedData
                 {
-                    LabelColumnName = "Label",
-                    FeatureColumnName = "Features",
-                    ExampleWeightColumnName = "Weight",
-                    NumberOfLeaves = 104,
-                    MinimumExampleCountPerLeaf = 5,
-                    LearningRate = 0.006,
-                    NumberOfIterations = 875,
-                }))
-                .Append(context.Transforms.Conversion.MapKeyToValue("PredictedEmotion", "PredictedLabel"));
+                    Text = x.Text,
 
-            return pipeline.Fit(cachedTrainData);
+                    Emotion = x.Emotion,
+
+                    Weight =
+                        (float)maxCount /
+                        classCounts[x.Emotion]
+
+                })
+                .ToList();
+
+
+
+
+            var trainData =
+                _context.Data
+                .LoadFromEnumerable(
+                    weightedTexts);
+
+
+
+            var cachedTrainData =
+                _context.Data.Cache(
+                    trainData);
+
+
+
+
+            var pipeline =
+                _context.Transforms
+                .Conversion
+                .MapValueToKey(
+                    "Label",
+                    "Emotion")
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .NormalizeText(
+                        "NormalizedText",
+                        "Text"))
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .TokenizeIntoWords(
+                        "Tokens",
+                        "NormalizedText"))
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .RemoveDefaultStopWords(
+                        "TokensClean",
+                        "Tokens"))
+
+
+
+                .Append(
+                    _context.Transforms.Conversion
+                    .MapValueToKey(
+                        "TokensKeys",
+                        "TokensClean"))
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .ProduceNgrams(
+                        "UniGrams",
+                        "TokensKeys",
+                        ngramLength: 1,
+                        useAllLengths: false))
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .ProduceNgrams(
+                        "BiGrams",
+                        "TokensKeys",
+                        ngramLength: 2,
+                        useAllLengths: false))
+
+
+
+                .Append(
+                    _context.Transforms.Text
+                    .ProduceNgrams(
+                        "TriGrams",
+                        "TokensKeys",
+                        ngramLength: 3,
+                        useAllLengths: false))
+
+
+
+                .Append(
+                    _context.Transforms
+                    .Concatenate(
+                        "Features",
+                        "UniGrams",
+                        "BiGrams",
+                        "TriGrams"))
+
+
+
+                .Append(
+                    _context.MulticlassClassification
+                    .Trainers
+                    .LightGbm(
+                        new LightGbmMulticlassTrainer.Options
+                        {
+                            LabelColumnName =
+                                "Label",
+
+
+                            FeatureColumnName =
+                                "Features",
+
+
+                            ExampleWeightColumnName =
+                                "Weight",
+
+
+                            NumberOfLeaves = 104,
+
+
+                            MinimumExampleCountPerLeaf = 5,
+
+
+                            LearningRate = 0.006,
+
+
+                            NumberOfIterations = 875
+                        }))
+
+
+
+                .Append(
+                    _context.Transforms
+                    .Conversion
+                    .MapKeyToValue(
+                        "PredictedEmotion",
+                        "PredictedLabel"));
+
+
+
+
+            return pipeline.Fit(
+                cachedTrainData);
         }
     }
 }
