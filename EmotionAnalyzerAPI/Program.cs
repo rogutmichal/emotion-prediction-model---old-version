@@ -1,25 +1,98 @@
+using EmotionAnalyzerML.Models;
+using EmotionAnalyzerML.Services;
+using Microsoft.ML;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+// ===============================
+// Controllers
+// ===============================
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+// ===============================
+// Swagger
+// ===============================
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// ===============================
+// Configuration
+// ===============================
+
+builder.Services.Configure<ModelSettings>(
+    builder.Configuration
+        .GetSection("ModelSettings"));
+
+
+// ===============================
+// ML Services
+// ===============================
+
+// Jeden wspólny MLContext dla ca³ej aplikacji
+builder.Services.AddSingleton<MLContext>();
+
+
+// ===============================
+// Model services
+// ===============================
+
+builder.Services.AddSingleton<ModelLoader>();
+
+builder.Services.AddSingleton<LoadedModelService>();
+
+
+// ===============================
+// Training
+// ===============================
+
+builder.Services.AddSingleton<EmotionModelTrainer>();
+
+builder.Services.AddSingleton<TrainingService>();
+
+
+// ===============================
+// Prediction
+// ===============================
+
+builder.Services.AddSingleton<EmotionPredictionService>();
+
+
+// ===============================
+// Evaluation
+// ===============================
+
+builder.Services.AddSingleton<ModelEvaluationService>();
+
+
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+
+// ===============================
+// HTTP pipeline
+// ===============================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+
 app.MapControllers();
+
 
 app.Run();
