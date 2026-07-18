@@ -9,6 +9,9 @@ var builder =
         Args = args
     });
 
+builder.WebHost.UseUrls(
+    "http://0.0.0.0:8080");
+
 
 builder.Configuration.Sources.Clear();
 
