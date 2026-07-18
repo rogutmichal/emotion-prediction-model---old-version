@@ -1,0 +1,124 @@
+﻿@page "/analyze"
+@rendermode InteractiveServer
+
+
+@using EmotionAnalyzerWeb.Models
+@using EmotionAnalyzerWeb.Components.Emotion
+
+@inject EmotionAnalyzerWeb.Services.EmotionApiService Api
+<div class="analyzer-container">
+
+    <div class="card analyzer-card">
+
+        <div class="card-body">
+
+            <h1 class="title">
+                Emotion Analyzer
+            </h1>
+
+
+            <p class="subtitle">
+                Analyze the emotion behind your text
+            </p>
+
+
+
+            <textarea class="form-control text-input"
+                      rows="5"
+                      placeholder="Enter your text..."
+                      @bind="text">
+            </textarea>
+
+
+
+            <button class="btn analyze-button"
+                    @onclick="Analyze"
+                    disabled="@isLoading">
+
+                @if (isLoading)
+                {
+                    <span>
+                        Analyzing...
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Analyze
+                    </span>
+                }
+
+            </button>
+
+
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">
+                    @errorMessage
+                </div>
+            }
+
+
+
+        </div>
+
+    </div>
+
+
+
+    <EmotionResult Result="result" />
+
+</div>
+
+
+
+@code {
+
+    private string text = "";
+
+    private EmotionPredictionResult? result;
+
+    private bool isLoading;
+
+    private string? errorMessage;
+
+
+
+    private async Task Analyze()
+    {
+        errorMessage = null;
+        result = null;
+
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            errorMessage =
+                "Please enter some text.";
+
+            return;
+        }
+
+
+        try
+        {
+            isLoading = true;
+
+
+            result =
+                await Api.Predict(
+                    text);
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage =
+                ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

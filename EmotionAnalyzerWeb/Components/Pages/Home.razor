@@ -1,124 +1,89 @@
 ﻿@page "/"
-@rendermode InteractiveServer
+
+<div class="landing">
+
+    <h1>
+        Emotion Analyzer AI
+    </h1>
+
+    <p class="subtitle">
+        AI-powered text emotion recognition system
+    </p>
 
 
-@using EmotionAnalyzerWeb.Models
-@using EmotionAnalyzerWeb.Components.Emotion
+    <div class="card">
 
-@inject EmotionAnalyzerWeb.Services.EmotionApiService Api
-<div class="analyzer-container">
+        <h2>
+            About the project
+        </h2>
 
-    <div class="card analyzer-card">
+        <p>
+            Emotion Analyzer is an application that uses
+            machine learning to recognize emotions from text.
+            The system analyzes the provided sentence and
+            predicts the probability of different emotions.
+        </p>
 
-        <div class="card-body">
+        <p>
+            The project was created using:
+        </p>
 
-            <h1 class="title">
-                Emotion Analyzer
-            </h1>
+        <ul>
+            <li>ASP.NET Core Web API</li>
+            <li>Blazor Web App</li>
+            <li>ML.NET Machine Learning</li>
+            <li>Docker + Render deployment</li>
+        </ul>
 
-
-            <p class="subtitle">
-                Analyze the emotion behind your text
-            </p>
-
-
-
-            <textarea class="form-control text-input"
-                      rows="5"
-                      placeholder="Enter your text..."
-                      @bind="text">
-            </textarea>
-
-
-
-            <button class="btn analyze-button"
-                    @onclick="Analyze"
-                    disabled="@isLoading">
-
-                @if (isLoading)
-                {
-                    <span>
-                        Analyzing...
-                    </span>
-                }
-                else
-                {
-                    <span>
-                        Analyze
-                    </span>
-                }
-
-            </button>
+    </div>
 
 
 
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert alert-danger">
-                    @errorMessage
-                </div>
-            }
+    <div class="card">
+
+        <h2>
+            How does the model work?
+        </h2>
 
 
+        <p>
+            The user enters a text message.
+            The application sends it to the API,
+            where the machine learning model analyzes
+            the text.
+        </p>
+
+
+        <ol>
+            <li>Text preprocessing</li>
+            <li>Machine learning prediction</li>
+            <li>Emotion probability calculation</li>
+            <li>Displaying the final result</li>
+        </ol>
+
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>
+            Supported emotions
+        </h2>
+
+        <div class="emotions">
+
+            <span>😄 Joy</span>
+            <span>😢 Sadness</span>
+            <span>😡 Anger</span>
+            <span>😨 Fear</span>
+            <span>❤️ Love</span>
+            <span>😮 Surprise</span>
 
         </div>
 
     </div>
 
 
-
-    <EmotionResult Result="result" />
-
 </div>
-
-
-
-@code {
-
-    private string text = "";
-
-    private EmotionPredictionResult? result;
-
-    private bool isLoading;
-
-    private string? errorMessage;
-
-
-
-    private async Task Analyze()
-    {
-        errorMessage = null;
-        result = null;
-
-
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            errorMessage =
-                "Please enter some text.";
-
-            return;
-        }
-
-
-        try
-        {
-            isLoading = true;
-
-
-            result =
-                await Api.Predict(
-                    text);
-
-        }
-        catch (Exception ex)
-        {
-            errorMessage =
-                ex.Message;
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-}

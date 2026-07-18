@@ -164,3 +164,60 @@ h1:focus {
 .alert {
     margin-top: 20px;
 }
+
+.landing {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+
+    .landing h1 {
+        text-align: center;
+        font-size: 42px;
+    }
+
+
+.subtitle {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 40px;
+}
+
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+
+.emotions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+
+    .emotions span {
+        padding: 10px 15px;
+        border-radius: 20px;
+        background: #f0f0f0;
+    }
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .nav-link span {
+        width: 20px;
+        text-align: center;
+    }
+
+    .nav-link span {
+        transform: translateY(-15px);
+    }
