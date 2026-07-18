@@ -221,3 +221,51 @@ h1:focus {
     .nav-link span {
         transform: translateY(-15px);
     }
+
+.top-row {
+    background: linear-gradient(135deg, #1f2937, #111827);
+    height: 70px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+
+.navbar-brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: white !important;
+    letter-spacing: 0.5px;
+}
+
+
+
+
+
+.nav-scrollable {
+    background: linear-gradient(180deg, #111827, #1f2937);
+}
+
+
+.nav-link {
+    color: #d1d5db;
+    margin: 6px 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+
+    .nav-link:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+
+    .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: white;
+    }
+
+
+   
