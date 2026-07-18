@@ -93,12 +93,11 @@ var app = builder.Build();
 // HTTP pipeline
 // ===============================
 
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
 
     app.UseSwaggerUI();
-}
+
 
 
 app.UseHttpsRedirection();
