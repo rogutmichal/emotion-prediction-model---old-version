@@ -5,24 +5,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+// Add services to the container.
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 
 
 
 builder.Services.AddHttpClient<EmotionApiService>(client =>
 {
-    client.BaseAddress = new Uri(
-        builder.Configuration["ApiSettings:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
 });
 
 
 builder.Services.AddHttpClient("ApiWakeup", client =>
 {
-    client.BaseAddress = new Uri(
-        builder.Configuration["ApiSettings:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
 });
 
 
@@ -31,7 +28,7 @@ var app = builder.Build();
 
 
 
-
+// Wake up the API on startup to avoid cold start issues
 _ = Task.Run(async () =>
 {
     try
@@ -54,7 +51,7 @@ _ = Task.Run(async () =>
 });
 
 
-
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

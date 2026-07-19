@@ -302,16 +302,13 @@
         try
         {
 
-            result =
-                await Api.GetEvaluation();
+            result = await Api.GetEvaluation();
 
         }
         catch (Exception ex)
         {
 
-            error =
-                "Could not connect to evaluation API. " +
-                ex.Message;
+            error = "Could not connect to evaluation API. " +  ex.Message;
 
         }
         finally

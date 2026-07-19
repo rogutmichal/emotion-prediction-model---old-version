@@ -16,27 +16,29 @@ namespace EmotionAnalyzerWeb.Services
 
 
 
+        // Method to call the Emotion Analyzer API for emotion prediction
         public async Task<EmotionPredictionResult?> Predict(string text)
         {
             try
             {
-                var response =
-                    await _httpClient.PostAsJsonAsync(
-                        "api/emotion/predict",
+                
+                var response =await _httpClient.PostAsJsonAsync(
+                         "api/emotion/predict",
                         new
                         {
                             text = text
                         });
 
-
+                
                 response.EnsureSuccessStatusCode();
 
-
+                
                 return await response.Content
                     .ReadFromJsonAsync<EmotionPredictionResult>();
             }
             catch (HttpRequestException)
             {
+                // Handle the case where the API is not available
                 throw new Exception(
     "Unable to connect to the Emotion Analyzer service. " +
     "The API may be starting after inactivity. " +
@@ -44,21 +46,21 @@ namespace EmotionAnalyzerWeb.Services
             }
         }
 
+        // Method to call the Emotion Analyzer API for model evaluation results
         public async Task<ModelEvaluationResult?> GetEvaluation()
         {
-            var response =
-                await _httpClient.GetAsync(
-                    "api/model/evaluation");
+            
+            var response = await _httpClient.GetAsync("api/model/evaluation");
 
+            
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception(
-                    "Evaluation results are not available yet.");
+                // Handle the case where the evaluation results are not available
+                throw new Exception("Evaluation results are not available yet.");
             }
 
-
-            return await response.Content
-                .ReadFromJsonAsync<ModelEvaluationResult>();
+            
+            return await response.Content.ReadFromJsonAsync<ModelEvaluationResult>();
         }
     }
 }

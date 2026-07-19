@@ -1,5 +1,6 @@
 ﻿namespace EmotionAnalyzerWeb.Models
 {
+    // Result of the emotion prediction
     public class EmotionPredictionResult
     {
         public string Text { get; set; }

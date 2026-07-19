@@ -20,67 +20,46 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 
-// ===============================
-// Controllers
-// ===============================
-
+//Controllers
 builder.Services.AddControllers();
 
-
-// ===============================
-// Swagger
-// ===============================
+//Swagger
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// ===============================
 // Configuration
-// ===============================
 
 builder.Services.Configure<ModelSettings>(
     builder.Configuration
         .GetSection("ModelSettings"));
 
 
-// ===============================
-// ML Services
-// ===============================
-
-// Jeden wspólny MLContext dla ca³ej aplikacji
+// MLContext
 builder.Services.AddSingleton<MLContext>();
 
 
-// ===============================
-// Model services
-// ===============================
-
+//Model Services
 builder.Services.AddSingleton<ModelLoader>();
 
 builder.Services.AddSingleton<LoadedModelService>();
 
-
-// ===============================
-// Training
-// ===============================
+//Training Services
 
 builder.Services.AddSingleton<EmotionModelTrainer>();
 
 builder.Services.AddSingleton<TrainingService>();
 
 
-// ===============================
-// Prediction
-// ===============================
+// Model Initialization
 builder.Services.AddSingleton<ModelInitializer>();
+
+// Prediction Services
 
 builder.Services.AddSingleton<EmotionPredictionService>();
 
-
-// ===============================
-// Evaluation
-// ===============================
+// Evaluation Services
 
 builder.Services.AddSingleton<EvaluationStorageService>();
 builder.Services.AddSingleton<ModelEvaluationService>();
@@ -90,13 +69,9 @@ builder.Services.AddSingleton<ModelEvaluationService>();
 var app = builder.Build();
 
 
+// Configure the HTTP request pipeline.
 
-// ===============================
-// HTTP pipeline
-// ===============================
-
-
-    app.UseSwagger();
+app.UseSwagger();
 
     app.UseSwaggerUI();
 
@@ -118,6 +93,7 @@ using (var scope = app.Services.CreateScope())
 
     initializer.Initialize();
 }
+// Root endpoint to check if the API is running
 
 app.MapGet("/", () =>
 {

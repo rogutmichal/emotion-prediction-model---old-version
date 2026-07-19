@@ -100,8 +100,7 @@
 
         if (string.IsNullOrWhiteSpace(text))
         {
-            errorMessage =
-                "Please enter some text.";
+            errorMessage ="Please enter some text.";
 
             return;
         }
@@ -112,15 +111,12 @@
             isLoading = true;
 
 
-            result =
-                await Api.Predict(
-                    text);
+            result = await Api.Predict(text);
 
         }
         catch (Exception ex)
         {
-            errorMessage =
-                ex.Message;
+            errorMessage = ex.Message;
         }
         finally
         {
