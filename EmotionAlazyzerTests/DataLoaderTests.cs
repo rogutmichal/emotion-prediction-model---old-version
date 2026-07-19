@@ -6,43 +6,41 @@ namespace EmotionAnalyzer.Tests;
 
 public class DataLoaderTests
 {
+    // Test to ensure that the LoadDataFromFile method returns a non-null and non-empty list of TextData
     [Fact]
     public void LoadData_ShouldReturnItems()
     {
-
+        // Arrange
         var path = "TestData/test.txt";
 
-
+        // Act
         var result = DataLoader.LoadDataFromFile(path);
 
 
+        // Assert
         Assert.NotNull(result);
 
         Assert.NotEmpty(result);
     }
-
+    // Test to ensure that the LoadDataFromFile method reads the correct text from the file
     [Fact]
     public void LoadData_ShouldReadCorrectText()
     {
-        var result =
-            DataLoader.LoadDataFromFile(
-                "TestData/test.txt");
+        // Arrange
+        var result = DataLoader.LoadDataFromFile("TestData/test.txt");
 
-        Assert.Equal(
-            "I love pizza",
-            result.First().Text);
+        // Assert
+        Assert.Equal("I love pizza", result.First().Text);
     }
 
-
+    // Test to ensure that the LoadDataFromFile method reads the correct emotion from the file
     [Fact]
     public void LoadData_ShouldReadCorrectEmotion()
     {
-        var result =
-            DataLoader.LoadDataFromFile(
-                "TestData/test.txt");
+        // Arrange
+        var result = DataLoader.LoadDataFromFile("TestData/test.txt");
 
-        Assert.Equal(
-            "joy",
-            result.First().Emotion);
+        // Assert
+        Assert.Equal("joy", result.First().Emotion);
     }
 }

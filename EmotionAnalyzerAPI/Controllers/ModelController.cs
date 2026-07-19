@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace EmotionAnalyzer.API.Controllers
 {
+    // This controller handles model training, evaluation, and status requests.
     [ApiController]
     [Route("api/model")]
     public class ModelController : ControllerBase
@@ -19,12 +20,7 @@ namespace EmotionAnalyzer.API.Controllers
         private readonly EvaluationStorageService _storage;
 
 
-        public ModelController(
-            TrainingService trainingService,
-            LoadedModelService loadedModelService,
-            ModelLoader modelLoader,
-            IOptions<ModelSettings> options,
-            EvaluationStorageService storage)
+        public ModelController(TrainingService trainingService, LoadedModelService loadedModelService, ModelLoader modelLoader, IOptions<ModelSettings> options, EvaluationStorageService storage)
         {
             _trainingService = trainingService;
             _loadedModelService = loadedModelService;
@@ -32,20 +28,16 @@ namespace EmotionAnalyzer.API.Controllers
             _modelSettings = options.Value;
             _storage = storage;
         }
-
+        // POST api/model/train
         [HttpPost("train")]
+        // This endpoint trains the model using the training data and saves it
         public IActionResult Train()
         {
             try
             {
-                var trainData =
-                    DataLoader.LoadDataFromFile(
-                        _modelSettings.TrainFilePath);
+                var trainData = DataLoader.LoadDataFromFile(_modelSettings.TrainFilePath);
 
-
-                _trainingService.TrainAndSave(
-                    trainData,
-                    _modelSettings.ModelPath);
+                _trainingService.TrainAndSave(trainData, _modelSettings.ModelPath);
 
 
                 return Ok(new
@@ -64,12 +56,12 @@ namespace EmotionAnalyzer.API.Controllers
             }
         }
 
-
-
-
+        // GET api/model/status
         [HttpGet("status")]
+        // This endpoint checks if the model is loaded and returns its status
         public IActionResult Status()
         {
+            
             return Ok(new
             {
                 loaded = _loadedModelService.IsLoaded,
@@ -82,36 +74,29 @@ namespace EmotionAnalyzer.API.Controllers
 
 
 
-
+        // POST api/model/evaluate
         [HttpPost("evaluate")]
+        // This endpoint evaluates the model using the test data and saves the evaluation results
         public IActionResult Evaluate()
         {
             try
             {
+                // Check if the model is loaded before evaluation
                 if (!_loadedModelService.IsLoaded)
                 {
-                    return BadRequest(
-                        "Model is not loaded.");
+                    return BadRequest("Model is not loaded.");
                 }
 
+                // Load test data
+                var testData = DataLoader.LoadDataFromFile(_modelSettings.TestFilePath);
 
-                var testData =
-                    DataLoader.LoadDataFromFile(
-                        _modelSettings.TestFilePath);
+                // Evaluate the model using the test data
+                var evaluator = new ModelEvaluationService(new Microsoft.ML.MLContext());
 
+                
+                var result = evaluator.Evaluate(_loadedModelService.Model, testData, "TEST");
 
-                var evaluator =
-                    new ModelEvaluationService(
-                        new Microsoft.ML.MLContext());
-
-
-                var result =
-                    evaluator.Evaluate(
-                        _loadedModelService.Model,
-                        testData,
-                        "TEST");
-
-
+                // Save the evaluation results
                 _storage.Save(result);
 
 
@@ -122,21 +107,21 @@ namespace EmotionAnalyzer.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        // GET api/model/evaluation
         [HttpGet("evaluation")]
+        // This endpoint retrieves the latest evaluation results
         public IActionResult GetEvaluation()
         {
-            var result =
-                _storage.Load();
+            // Load the evaluation results from storage
+            var result = _storage.Load();
 
-
+            
             if (result == null)
             {
                 return NotFound(
                     new
                     {
-                        message =
-                        "No evaluation results available."
+                        message = "No evaluation results available."
                     });
             }
 
