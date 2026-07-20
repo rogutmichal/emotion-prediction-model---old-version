@@ -21,23 +21,18 @@ namespace EmotionAnalyzerML.Services
             // Validate the model path
             if (string.IsNullOrWhiteSpace(modelPath))
             {
-                throw new ArgumentException(
-                    "Model path cannot be empty.");
+                throw new ArgumentException("Model path cannot be empty.");
             }
 
 
             // Check if the model file exists
             if (!File.Exists(modelPath))
             {
-                throw new FileNotFoundException(
-                    "Model file was not found.",
-                    modelPath);
+                throw new FileNotFoundException("Model file was not found.", modelPath);
             }
            
 
-            return _context.Model.Load(
-                modelPath,
-                out _);
+            return _context.Model.Load(modelPath,out _);
         }
     }
 }

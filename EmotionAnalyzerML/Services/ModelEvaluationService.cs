@@ -10,61 +10,37 @@ namespace EmotionAnalyzerML.Services
         private readonly MLContext _context;
 
 
-        public ModelEvaluationService(
-            MLContext context)
+        public ModelEvaluationService(MLContext context)
         {
             _context = context;
         }
 
 
         // Evaluates the provided model using the given test data and returns the evaluation results.
-        public ModelEvaluationResult Evaluate(
-            ITransformer model,
-            List<TextData> texts,
-            string datasetName)
+        public ModelEvaluationResult Evaluate(ITransformer model,List<TextData> texts,string datasetName)
         {
 
-            var testData =
-                _context.Data.LoadFromEnumerable(
-                    texts);
+            var testData = _context.Data.LoadFromEnumerable(texts);
 
             // Mapping the "Emotion" column to a key type for evaluation
-            var labelMapping =
-                _context.Transforms
-                .Conversion
-                .MapValueToKey(
-                    "Label",
-                    "Emotion");
+            var labelMapping =_context.Transforms.Conversion.MapValueToKey("Label","Emotion");
 
             // Transform the test data
-            var testDataWithLabel =
-                labelMapping
-                .Fit(testData)
-                .Transform(testData);
+            var testDataWithLabel = labelMapping.Fit(testData).Transform(testData);
 
 
             // Use the model to make predictions on the test data
-            var predictions =
-                model.Transform(
-                    testDataWithLabel);
+            var predictions = model.Transform(testDataWithLabel);
 
 
             // Evaluate the predictions using multiclass classification metrics
-            var metrics =
-                _context.MulticlassClassification
-                .Evaluate(
-                    predictions,
-                    labelColumnName: "Label");
+            var metrics = _context.MulticlassClassification.Evaluate(predictions,labelColumnName: "Label");
 
-
-
-            var labelBuffer =
-                new VBuffer<ReadOnlyMemory<char>>();
+           
+            var labelBuffer =new VBuffer<ReadOnlyMemory<char>>();
 
             // Extract the predicted labels from the predictions
-            predictions.Schema["PredictedLabel"]
-                .GetKeyValues(
-                    ref labelBuffer);
+            predictions.Schema["PredictedLabel"].GetKeyValues(ref labelBuffer);
 
            
             var labels =
@@ -75,32 +51,24 @@ namespace EmotionAnalyzerML.Services
 
 
             // Get the confusion matrix from the evaluation metrics
-            var confusionMatrix =
-                metrics.ConfusionMatrix;
+            var confusionMatrix = metrics.ConfusionMatrix;
 
 
             // Calculate precision, recall, and F1 score for each class
-            var precision =
-                new Dictionary<string, double>();
+            var precision = new Dictionary<string, double>();
 
-            var recall =
-                new Dictionary<string, double>();
+            var recall = new Dictionary<string, double>();
 
-            var f1 =
-                new Dictionary<string, double>();
+            var f1 = new Dictionary<string, double>();
 
 
             // Loop through each label and calculate the metrics
             for (int i = 0; i < labels.Count; i++)
             {
-                var p =
-                    confusionMatrix
-                    .PerClassPrecision[i];
+                var p = confusionMatrix.PerClassPrecision[i];
 
 
-                var r =
-                    confusionMatrix
-                    .PerClassRecall[i];
+                var r = confusionMatrix.PerClassRecall[i];
 
 
                 var f =
@@ -124,16 +92,13 @@ namespace EmotionAnalyzerML.Services
                 DatasetName = datasetName,
 
 
-                MicroAccuracy =
-                    metrics.MicroAccuracy,
+                MicroAccuracy = metrics.MicroAccuracy,
 
 
-                MacroAccuracy =
-                    metrics.MacroAccuracy,
+                MacroAccuracy = metrics.MacroAccuracy,
 
 
-                LogLoss =
-                    metrics.LogLoss,
+                LogLoss = metrics.LogLoss,
 
 
                 Labels = labels,

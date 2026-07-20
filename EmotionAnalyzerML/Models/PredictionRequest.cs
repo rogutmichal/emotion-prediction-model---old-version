@@ -2,7 +2,7 @@
 {
     public class PredictionRequest
     {
-        // The text to be analyzed for emotion
+        // Text to be analyzed for emotion prediction
         public string Text { get; set; } = string.Empty;
     }
 }

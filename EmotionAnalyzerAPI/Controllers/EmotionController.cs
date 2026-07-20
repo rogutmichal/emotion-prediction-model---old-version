@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmotionAnalyzer.API.Controllers
 {
-    // This controller handles emotion prediction requests.
+    // Controller for handling emotion prediction requests. 
     [ApiController]
     [Route("api/emotion")]
     public class EmotionController : ControllerBase
@@ -20,12 +20,11 @@ namespace EmotionAnalyzer.API.Controllers
 
         // POST api/emotion/predict
         [HttpPost("predict")]
-        public IActionResult Predict(
-            [FromBody] PredictionRequest request)
+        // Method to handle emotion prediction requests. 
+        public IActionResult Predict([FromBody] PredictionRequest request)
         {
             // Validate the request
-            if (request == null ||
-                string.IsNullOrWhiteSpace(request.Text))
+            if (request == null || string.IsNullOrWhiteSpace(request.Text))
             {
                 return BadRequest(new
                 {

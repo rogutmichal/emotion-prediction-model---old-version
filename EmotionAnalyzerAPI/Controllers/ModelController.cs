@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace EmotionAnalyzer.API.Controllers
 {
-    // This controller handles model training, evaluation, and status requests.
+    // Controller handles model training, evaluation, and status requests.
     [ApiController]
     [Route("api/model")]
     public class ModelController : ControllerBase
@@ -30,7 +30,7 @@ namespace EmotionAnalyzer.API.Controllers
         }
         // POST api/model/train
         [HttpPost("train")]
-        // This endpoint trains the model using the training data and saves it
+        // This endWpoint trains the model using the training data and saves it
         public IActionResult Train()
         {
             try

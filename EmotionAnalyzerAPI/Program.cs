@@ -4,8 +4,7 @@ using EmotionAnalyzerML.Services;
 using Microsoft.ML;
 
 
-var builder =
-    WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 
 
@@ -31,9 +30,7 @@ builder.Services.AddSwaggerGen();
 
 // Configuration
 
-builder.Services.Configure<ModelSettings>(
-    builder.Configuration
-        .GetSection("ModelSettings"));
+builder.Services.Configure<ModelSettings>(builder.Configuration.GetSection("ModelSettings"));
 
 
 // MLContext
@@ -73,7 +70,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 
-    app.UseSwaggerUI();
+app.UseSwaggerUI();
 
 
 
@@ -87,9 +84,7 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var initializer =
-        scope.ServiceProvider
-            .GetRequiredService<ModelInitializer>();
+    var initializer = scope.ServiceProvider.GetRequiredService<ModelInitializer>();
 
     initializer.Initialize();
 }

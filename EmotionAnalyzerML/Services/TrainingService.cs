@@ -10,12 +10,8 @@ namespace EmotionAnalyzerML.Services
         private readonly MLContext _context;
         private readonly EmotionModelTrainer _trainer;
 
-
-
         
-        public TrainingService(
-            MLContext context,
-            EmotionModelTrainer trainer)
+        public TrainingService(MLContext context, EmotionModelTrainer trainer)
         {
             _context = context;
             _trainer = trainer;
@@ -40,21 +36,14 @@ namespace EmotionAnalyzerML.Services
             // Ensure the directory exists before saving the model
             if (!string.IsNullOrEmpty(directory))
             {
-                Directory.CreateDirectory(
-                    directory);
+                Directory.CreateDirectory(directory);
             }
 
             // Save the trained model to the specified path
 
-            _context.Model.Save(
-                model,
-                dataView.Schema,
-                modelPath);
+            _context.Model.Save(model,dataView.Schema,modelPath);
 
-
-
-            Console.WriteLine(
-                "Model saved.");
+            Console.WriteLine("Model saved.");
         }
     }
 }

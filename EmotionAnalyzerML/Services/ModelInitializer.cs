@@ -11,10 +11,7 @@ namespace EmotionAnalyzerML.Services
         private readonly ModelSettings _settings;
 
       
-        public ModelInitializer(
-            LoadedModelService loadedModel,
-            ModelLoader modelLoader,
-            IOptions<ModelSettings> options)
+        public ModelInitializer(LoadedModelService loadedModel,ModelLoader modelLoader, IOptions<ModelSettings> options)
         {
             _loadedModel = loadedModel;
             _modelLoader = modelLoader;
@@ -30,10 +27,7 @@ namespace EmotionAnalyzerML.Services
                 return;
             }
 
-
-            _loadedModel.LoadModel(
-                _modelLoader,
-                _settings.ModelPath);
+            _loadedModel.LoadModel(_modelLoader,_settings.ModelPath);
         }
     }
 }

@@ -8,7 +8,6 @@ namespace EmotionAnalyzerML.Models
 {
     public class WeightedData : TextData
     {
-       
         public float Weight { get; set; }
     }
 }

@@ -353,7 +353,6 @@ public class EmotionBasedRecommendation
 
 
 
-        // Po treningu przeładuj model do pamięci
 
         loadedModel.LoadModel(
             modelLoader,

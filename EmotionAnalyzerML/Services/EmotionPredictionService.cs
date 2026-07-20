@@ -23,9 +23,7 @@ namespace EmotionAnalyzerML.Services
 
 
         
-        public EmotionPredictionService(
-            MLContext context,
-            LoadedModelService loadedModel)
+        public EmotionPredictionService(MLContext context,LoadedModelService loadedModel)
         {
            
             _context = context;
@@ -46,8 +44,6 @@ namespace EmotionAnalyzerML.Services
             // Get the pre-trained model
             var model =_loadedModel.GetModel();
 
-
-
             var input = new TextData
             {
                 Text = text
@@ -67,16 +63,11 @@ namespace EmotionAnalyzerML.Services
 
 
             // Extract the scores for each emotion from the transformed data
-            var scores =
-                transformedData
-                .GetColumn<float[]>("Score")
-                .First();
+            var scores = transformedData.GetColumn<float[]>("Score").First();
 
 
             // Create a list of EmotionScore objects
-            var predictions =
-                EmotionLabels
-                .Select((label, index) => new EmotionScore
+            var predictions = EmotionLabels.Select((label, index) => new EmotionScore
                 {
                     Emotion = label,
 
@@ -85,8 +76,6 @@ namespace EmotionAnalyzerML.Services
                 .OrderByDescending(x => x.Confidence)
                 .Take(6)
                 .ToList();
-
-
 
             return new EmotionPredictionResult
             {

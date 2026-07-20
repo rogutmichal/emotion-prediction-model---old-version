@@ -6,24 +6,21 @@ namespace EmotionAnalyzerML.Services
     public class LoadedModelService
     {
         public ITransformer Model { get; private set; }
-
-        
-        public bool IsLoaded =>
-            Model != null;
+       
+        public bool IsLoaded => Model != null;
 
 
         // Loads the model from the specified path using the provided ModelLoader
-        public void LoadModel(
-            ModelLoader loader,
-            string modelPath)
+        public void LoadModel(ModelLoader loader, string modelPath)
         {
-          
+
+            // If the model is already loaded, we don't need to load it again.
             if (IsLoaded)
             {
                 return;
             }
 
-
+            // Load the model using the provided ModelLoader
             Model = loader.Load(modelPath);
         }
 
@@ -33,8 +30,7 @@ namespace EmotionAnalyzerML.Services
         {
             if (!IsLoaded)
             {
-                throw new InvalidOperationException(
-                    "Model has not been loaded.");
+                throw new InvalidOperationException("Model has not been loaded.");
             }
 
             return Model;

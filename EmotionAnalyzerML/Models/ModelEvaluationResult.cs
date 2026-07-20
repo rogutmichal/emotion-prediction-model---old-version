@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace EmotionAnalyzerML.Models
 {
+    // Class to hold the evaluation results
     public class ModelEvaluationResult
     {
         public string DatasetName { get; set; }
 
 
-        // basic metrics
+        // Basic metrics
         public double MicroAccuracy { get; set; }
 
         public double MacroAccuracy { get; set; }
