@@ -241,6 +241,19 @@ joy                  3         6        57        11         3       615
 
 ---
 
+## Testing
+
+The project includes unit and integration tests covering:
+
+- model training
+- model loading
+- emotion prediction
+- model evaluation
+- error handling
+
+
+
+---
 # Technologies
 
 
