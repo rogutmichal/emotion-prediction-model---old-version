@@ -22,6 +22,8 @@ The project consists of:
 Frontend:
 https://emotion-analyzer-web.onrender.com/
 
+Api:
+https://emotion-analyzer-api-rbo7.onrender.com/swagger
 
 
 
